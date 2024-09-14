@@ -2,7 +2,7 @@ package controllers
 
 import (
     "github.com/gin-gonic/gin"
-    "shei-deli/models"
+    "shei-deli/model"
 )
 
 var recipes []models.Recipe  // to be replaced with actual DB calls
