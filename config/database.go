@@ -3,18 +3,25 @@ package config
 
 import (
     "log"
-    "gorm.io/driver/postgres"
+    "gorm.io/driver/sqlite"
     "gorm.io/gorm"
+    "shei-deli/models"
 )
 
 var DB *gorm.DB
 
 func InitDatabase() {
     var err error
-    dsn := "host=localhost user=gorm password=gorm dbname=shei_deli port=5432 sslmode=disable"
-    DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    DB, err = gorm.Open(sqlite.Open("shei_deli.db"), &gorm.Config{})
     if err != nil {
         log.Fatalf("Failed to connect to database: %v", err)
     }
-    log.Println("Database connected!")
+
+    // Auto-migrate the schema
+    err = DB.AutoMigrate(&models.Recipe{}, &models.Feedback{}, &models.User{})
+    if err != nil {
+        log.Fatalf("Failed to migrate database: %v", err)
+    }
+
+    log.Println("Database connected and migrated!")
 }
