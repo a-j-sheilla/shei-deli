@@ -97,11 +97,34 @@
         .category-image {
             width: 100%;
             height: 200px;
-            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .category-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+            z-index: 1;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .category-image-overlay {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            z-index: 2;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
 
         .category-content {
@@ -188,7 +211,9 @@
 
         <div class="category-grid">
             <div class="category-card" onclick="alert('Navigate to Plant-Based Meals')">
-                <div class="category-image">🌱</div>
+                <div class="category-image" style="background-image: url('images/vegan.jpeg');">
+                    <div class="category-image-overlay">Plant-Based Meals</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Plant-Based Meals</h3>
                     <p class="category-description">Vegan/vegetarian options (no animal products)</p>
@@ -196,7 +221,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Kids Meals')">
-                <div class="category-image">🧸</div>
+                <div class="category-image" style="background-image: url('images/kids-meals.jpeg');">
+                    <div class="category-image-overlay">Kids' Meals</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Kids' Meals</h3>
                     <p class="category-description">Fun, simple, and nutritious meals for children</p>
@@ -204,7 +231,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Light Meals')">
-                <div class="category-image">⚖️</div>
+                <div class="category-image" style="background-image: url('images/light-meals.jpeg');">
+                    <div class="category-image-overlay">Light Meals</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Light Meals (Weight Loss)</h3>
                     <p class="category-description">Low-calorie, balanced recipes</p>
@@ -212,7 +241,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Hearty Meals')">
-                <div class="category-image">🍲</div>
+                <div class="category-image" style="background-image: url('images/hearty-meals.jpeg');">
+                    <div class="category-image-overlay">Hearty Meals</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Hearty Meals (Weight Gain)</h3>
                     <p class="category-description">High-calorie, energy-packed recipes</p>
@@ -220,7 +251,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Meat Stews')">
-                <div class="category-image">🍖</div>
+                <div class="category-image" style="background-image: url('images/stews.jpeg');">
+                    <div class="category-image-overlay">Meat Stews</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Meat Stews</h3>
                     <p class="category-description">Beef, chicken, goat, lamb, and other meat-based stews</p>
@@ -228,7 +261,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Veggie Stews')">
-                <div class="category-image">🥕</div>
+                <div class="category-image" style="background-image: url('images/vegetable-stews.jpeg');">
+                    <div class="category-image-overlay">Veggie Stews</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Veggie Stews</h3>
                     <p class="category-description">Lentil, bean, mushroom, and vegetable stews</p>
@@ -236,7 +271,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Seafood Stews')">
-                <div class="category-image">🐟</div>
+                <div class="category-image" style="background-image: url('images/fish&sea-food.jpeg');">
+                    <div class="category-image-overlay">Seafood & Fish Stews</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Seafood & Fish Stews</h3>
                     <p class="category-description">Fish stews, seafood mixes, and ocean-inspired flavors</p>
@@ -244,7 +281,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Fusion Stews')">
-                <div class="category-image">🌍</div>
+                <div class="category-image" style="background-image: url('images/fusion.jpeg');">
+                    <div class="category-image-overlay">Fusion Stews</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Fusion Stews</h3>
                     <p class="category-description">Cultural and traditional varieties (e.g., goulash, curries)</p>
@@ -252,7 +291,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Soups')">
-                <div class="category-image">🍜</div>
+                <div class="category-image" style="background-image: url('images/soups.jpeg');">
+                    <div class="category-image-overlay">Soups</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Soups</h3>
                     <p class="category-description">Warm, comforting soups</p>
@@ -260,7 +301,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Drinks')">
-                <div class="category-image">🥤</div>
+                <div class="category-image" style="background-image: url('images/drinks&smoothies.jpeg');">
+                    <div class="category-image-overlay">Drinks</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Drinks</h3>
                     <p class="category-description">Smoothies, juices, teas, and other beverages</p>
@@ -268,7 +311,9 @@
             </div>
 
             <div class="category-card" onclick="alert('Navigate to Pastries')">
-                <div class="category-image">🥐</div>
+                <div class="category-image" style="background-image: url('images/pastries.jpeg');">
+                    <div class="category-image-overlay">Pastries</div>
+                </div>
                 <div class="category-content">
                     <h3 class="category-title">Pastries</h3>
                     <p class="category-description">Baked goods such as cakes, cookies, pies, and breads</p>
