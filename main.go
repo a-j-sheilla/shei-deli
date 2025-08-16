@@ -1,40 +1,24 @@
 package main
 
 import (
-    "fmt"
     "log"
-    "sheideli/db"
-    "sheideli/models"
+    "shei-deli/config"
+    "shei-deli/routes"
 )
 
 func main() {
-    // Connect to the SQLite database
-    database, err := db.ConnectSQLite()
-    if err != nil {
-        log.Fatal("Failed to connect to database:", err)
-    }
-    defer database.Close()
+    // Initialize database connection and run migrations
+    config.InitDatabase()
 
-    // Run migrations to create tables if they don't exist
-    err = db.RunMigrations(database)
-    if err != nil {
-        log.Fatal("Failed to run migrations:", err)
-    }
+    // Seed the database with initial data
+    config.SeedDatabase()
 
-    // Example: Insert a recipe
-    err = models.InsertRecipe(database, "Vegan Burger", "Delicious plant-based burger with veggies.")
-    if err != nil {
-        log.Fatal("Failed to insert recipe:", err)
-    }
+    // Setup routes
+    router := routes.SetupRoutes()
 
-    // Example: Fetch and display all recipes
-    recipes, err := models.GetAllRecipes(database)
-    if err != nil {
-        log.Fatal("Failed to get recipes:", err)
-    }
-
-    fmt.Println("Recipes:")
-    for _, recipe := range recipes {
-        fmt.Printf("ID: %d, Name: %s, Description: %s\n", recipe.ID, recipe.Name, recipe.Description)
+    // Start the server
+    log.Println("Starting Shei-deli server on :8080...")
+    if err := router.Run(":8080"); err != nil {
+        log.Fatal("Failed to start server:", err)
     }
 }
