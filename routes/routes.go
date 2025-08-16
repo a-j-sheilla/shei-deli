@@ -82,6 +82,13 @@ func SetupRoutes() *gin.Engine {
                 })
             })
         }
+
+        // External API integration routes
+        external := v1.Group("/external")
+        {
+            external.GET("/recipes/:category", controllers.SearchExternalRecipes)
+            external.GET("/api-mapping", controllers.GetAPIMappingInfo)
+        }
     }
 
     // Health check endpoint
