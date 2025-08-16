@@ -42,7 +42,7 @@ func getCategories() []Category {
             Key:         "light_meals",
             Name:        "Light Meals (Weight Loss)",
             Description: "Low-calorie, balanced recipes",
-            Image:       "hearty-meals.jpeg",
+            Image:       "light-meals.jpeg",
         },
         {
             Key:         "hearty_meals",
@@ -78,7 +78,7 @@ func getCategories() []Category {
             Key:         "soups",
             Name:        "Soups",
             Description: "Warm, comforting soups",
-            Image:       "stews.jpeg",
+            Image:       "soups.jpeg",
         },
         {
             Key:         "drinks",
@@ -90,7 +90,7 @@ func getCategories() []Category {
             Key:         "pastries",
             Name:        "Pastries",
             Description: "Baked goods such as cakes, cookies, pies, and breads",
-            Image:       "fusion.jpeg", // Using fusion image as placeholder
+            Image:       "pastries.jpeg",
         },
     }
 }
