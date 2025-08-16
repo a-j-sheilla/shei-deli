@@ -1,0 +1,42 @@
+{{define "content"}}
+<div class="category-header text-center mb-2">
+    <h2>{{.CategoryName}}</h2>
+    <p>{{.CategoryDescription}}</p>
+</div>
+
+{{if .Recipes}}
+<div class="recipe-grid">
+    {{range .Recipes}}
+    <div class="recipe-card" data-recipe-id="{{.ID}}">
+        <div class="recipe-image"></div>
+        <div class="recipe-content">
+            <h3 class="recipe-title">{{.Title}}</h3>
+            <p class="recipe-description">{{.Description}}</p>
+            <div class="recipe-meta">
+                <span>{{add .PrepTime .CookTime}} min • {{.Servings}} servings</span>
+                <div class="rating">
+                    <span class="stars">{{stars .AverageRating}}</span>
+                    <span>{{printf "%.1f" .AverageRating}}</span>
+                </div>
+            </div>
+            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">
+                by {{.User.GetDisplayName}}
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{else}}
+<div class="text-center mt-2">
+    <div style="background: white; padding: 3rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+        <h3>No recipes found in this category yet</h3>
+        <p>Be the first to share a recipe in this category!</p>
+        <a href="/add-recipe?category={{.CategoryKey}}" class="btn">Add First Recipe</a>
+    </div>
+</div>
+{{end}}
+
+<div class="text-center mt-2">
+    <a href="/add-recipe?category={{.CategoryKey}}" class="btn">Add Recipe to {{.CategoryName}}</a>
+</div>
+{{end}}

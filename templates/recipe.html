@@ -1,0 +1,149 @@
+{{define "content"}}
+<div class="recipe-detail">
+    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
+            <div>
+                <div class="recipe-image" style="height: 300px; background: linear-gradient(45deg, #f0f0f0, #e0e0e0); border-radius: 10px;"></div>
+                <div style="margin-top: 1rem;">
+                    <div class="rating" style="justify-content: center; font-size: 1.2rem;">
+                        <span class="stars">{{stars .Recipe.AverageRating}}</span>
+                        <span>{{printf "%.1f" .Recipe.AverageRating}} ({{len .Recipe.Feedbacks}} reviews)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h1>{{.Recipe.Title}}</h1>
+                <p style="color: #666; font-size: 1.1rem; margin: 1rem 0;">{{.Recipe.Description}}</p>
+                
+                <div style="display: flex; gap: 2rem; margin: 1.5rem 0; flex-wrap: wrap;">
+                    <div>
+                        <strong>Prep Time:</strong> {{.Recipe.PrepTime}} min
+                    </div>
+                    <div>
+                        <strong>Cook Time:</strong> {{.Recipe.CookTime}} min
+                    </div>
+                    <div>
+                        <strong>Servings:</strong> {{.Recipe.Servings}}
+                    </div>
+                    <div>
+                        <strong>Difficulty:</strong> {{.Recipe.Difficulty}}
+                    </div>
+                </div>
+                
+                <div style="margin: 1rem 0;">
+                    <strong>Category:</strong> 
+                    <a href="/category/{{.Recipe.Category}}" style="color: #667eea; text-decoration: none;">
+                        {{.Recipe.Category.GetDisplayName}}
+                    </a>
+                </div>
+                
+                <div style="margin: 1rem 0;">
+                    <strong>Recipe by:</strong> {{.Recipe.User.GetDisplayName}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+            <h3>Ingredients</h3>
+            <div style="white-space: pre-line; line-height: 1.8;">{{.Recipe.Ingredients}}</div>
+        </div>
+        
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+            <h3>Instructions</h3>
+            <div style="white-space: pre-line; line-height: 1.8;">{{.Recipe.Instructions}}</div>
+        </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+        <h3>Reviews & Ratings</h3>
+        
+        <!-- Add Feedback Form -->
+        <form id="feedbackForm" style="margin: 2rem 0; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+            <h4>Leave a Review</h4>
+            <input type="hidden" name="recipe_id" value="{{.Recipe.ID}}">
+            
+            <div class="form-group">
+                <label>Rating:</label>
+                <div id="starRating" style="font-size: 1.5rem;">
+                    <span class="star" data-rating="1">☆</span>
+                    <span class="star" data-rating="2">☆</span>
+                    <span class="star" data-rating="3">☆</span>
+                    <span class="star" data-rating="4">☆</span>
+                    <span class="star" data-rating="5">☆</span>
+                </div>
+                <input type="hidden" id="rating" name="rating" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <textarea id="comment" name="comment" class="form-control" rows="4" placeholder="Share your thoughts about this recipe..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn">Submit Review</button>
+        </form>
+
+        <!-- Existing Feedback -->
+        {{if .Recipe.Feedbacks}}
+        <div class="feedback-list">
+            {{range .Recipe.Feedbacks}}
+            <div style="border-bottom: 1px solid #eee; padding: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong>{{.User.GetDisplayName}}</strong>
+                    <div class="rating">
+                        <span class="stars">{{stars .Rating}}</span>
+                    </div>
+                </div>
+                {{if .Comment}}
+                <p style="color: #666;">{{.Comment}}</p>
+                {{end}}
+                <small style="color: #888;">{{.CreatedAt.Format "January 2, 2006"}}</small>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <p style="text-align: center; color: #666; margin: 2rem 0;">No reviews yet. Be the first to review this recipe!</p>
+        {{end}}
+    </div>
+</div>
+
+<script>
+// Interactive star rating
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('#starRating .star');
+    const ratingInput = document.getElementById('rating');
+    
+    stars.forEach((star, index) => {
+        star.style.cursor = 'pointer';
+        star.addEventListener('click', function() {
+            const rating = index + 1;
+            ratingInput.value = rating;
+            updateStars(rating);
+        });
+        
+        star.addEventListener('mouseover', function() {
+            updateStars(index + 1);
+        });
+    });
+    
+    document.getElementById('starRating').addEventListener('mouseleave', function() {
+        updateStars(ratingInput.value || 0);
+    });
+    
+    function updateStars(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.textContent = '★';
+                star.style.color = '#ffc107';
+            } else {
+                star.textContent = '☆';
+                star.style.color = '#ddd';
+            }
+        });
+    }
+});
+</script>
+{{end}}

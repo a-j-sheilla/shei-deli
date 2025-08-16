@@ -9,10 +9,17 @@ import (
 type RecipeCategory string
 
 const (
-    VeganMeals      RecipeCategory = "vegan_meals"
+    PlantBasedMeals RecipeCategory = "plant_based_meals"
     KidsMeals       RecipeCategory = "kids_meals"
-    WeightLossMeals RecipeCategory = "weight_loss_meals"
-    WeightGainMeals RecipeCategory = "weight_gain_meals"
+    LightMeals      RecipeCategory = "light_meals"
+    HeartyMeals     RecipeCategory = "hearty_meals"
+    MeatStews       RecipeCategory = "meat_stews"
+    VeggieStews     RecipeCategory = "veggie_stews"
+    SeafoodStews    RecipeCategory = "seafood_stews"
+    FusionStews     RecipeCategory = "fusion_stews"
+    Soups           RecipeCategory = "soups"
+    Drinks          RecipeCategory = "drinks"
+    Pastries        RecipeCategory = "pastries"
 )
 
 // Recipe model stores recipe data
@@ -38,14 +45,28 @@ type Recipe struct {
 // GetCategoryDisplayName returns a human-readable category name
 func (r RecipeCategory) GetDisplayName() string {
     switch r {
-    case VeganMeals:
-        return "Vegan Meals"
+    case PlantBasedMeals:
+        return "Plant-Based Meals"
     case KidsMeals:
         return "Kids' Meals"
-    case WeightLossMeals:
-        return "Weight Loss Meals"
-    case WeightGainMeals:
-        return "Weight Gain Meals"
+    case LightMeals:
+        return "Light Meals (Weight Loss)"
+    case HeartyMeals:
+        return "Hearty Meals (Weight Gain)"
+    case MeatStews:
+        return "Meat Stews"
+    case VeggieStews:
+        return "Veggie Stews"
+    case SeafoodStews:
+        return "Seafood & Fish Stews"
+    case FusionStews:
+        return "Fusion Stews"
+    case Soups:
+        return "Soups"
+    case Drinks:
+        return "Drinks"
+    case Pastries:
+        return "Pastries"
     default:
         return string(r)
     }
@@ -54,7 +75,7 @@ func (r RecipeCategory) GetDisplayName() string {
 // IsValidCategory checks if the category is valid
 func IsValidCategory(category string) bool {
     switch RecipeCategory(category) {
-    case VeganMeals, KidsMeals, WeightLossMeals, WeightGainMeals:
+    case PlantBasedMeals, KidsMeals, LightMeals, HeartyMeals, MeatStews, VeggieStews, SeafoodStews, FusionStews, Soups, Drinks, Pastries:
         return true
     default:
         return false

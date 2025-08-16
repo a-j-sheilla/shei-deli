@@ -1,0 +1,60 @@
+{{define "content"}}
+<div class="hero-section text-center mb-2">
+    <h2>Discover Amazing Recipes</h2>
+    <p>Explore our diverse collection of recipes organized by categories</p>
+</div>
+
+<div class="category-grid">
+    {{range .Categories}}
+    <div class="category-card" data-category="{{.Key}}">
+        <img src="/images/{{.Image}}" alt="{{.Name}}" class="category-image">
+        <div class="category-content">
+            <h3 class="category-title">{{.Name}}</h3>
+            <p class="category-description">{{.Description}}</p>
+        </div>
+    </div>
+    {{end}}
+</div>
+
+<section class="featured-recipes mt-2">
+    <h2 class="text-center mb-2">Featured Recipes</h2>
+    <div class="recipe-grid">
+        {{range .FeaturedRecipes}}
+        <div class="recipe-card" data-recipe-id="{{.ID}}">
+            <div class="recipe-image"></div>
+            <div class="recipe-content">
+                <h3 class="recipe-title">{{.Title}}</h3>
+                <p class="recipe-description">{{.Description}}</p>
+                <div class="recipe-meta">
+                    <span>{{add .PrepTime .CookTime}} min</span>
+                    <div class="rating">
+                        <span class="stars">{{stars .AverageRating}}</span>
+                        <span>{{printf "%.1f" .AverageRating}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</section>
+
+<section class="stats-section mt-2 text-center">
+    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+        <h3>Community Stats</h3>
+        <div style="display: flex; justify-content: space-around; margin-top: 1rem; flex-wrap: wrap;">
+            <div style="margin: 1rem;">
+                <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalRecipes}}</h4>
+                <p>Total Recipes</p>
+            </div>
+            <div style="margin: 1rem;">
+                <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalUsers}}</h4>
+                <p>Community Members</p>
+            </div>
+            <div style="margin: 1rem;">
+                <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalFeedback}}</h4>
+                <p>Recipe Reviews</p>
+            </div>
+        </div>
+    </div>
+</section>
+{{end}}

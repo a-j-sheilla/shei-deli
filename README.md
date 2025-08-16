@@ -1,43 +1,85 @@
 # Shei-deli Recipe Application
 
-A community-driven recipe sharing platform built with Go, Gin, GORM, and SQLite.
+A community-driven recipe sharing platform built with Go, Gin, GORM, and SQLite with a beautiful web interface.
 
 ## Features
 
 ### Recipe Categories
-- **Vegan Meals**: Plant-based recipes for vegan lifestyle
-- **Kids' Meals**: Fun and healthy recipes that kids will love
-- **Weight Loss Meals**: Light, nutritious recipes for weight management
-- **Weight Gain Meals**: High-calorie, nutrient-dense recipes for healthy weight gain
+- **Plant-Based Meals**: Vegan/vegetarian options (no animal products)
+- **Kids' Meals**: Fun, simple, and nutritious meals for children
+- **Light Meals (Weight Loss)**: Low-calorie, balanced recipes
+- **Hearty Meals (Weight Gain)**: High-calorie, energy-packed recipes
+- **Meat Stews**: Beef, chicken, goat, lamb, and other meat-based stews
+- **Veggie Stews**: Lentil, bean, mushroom, and vegetable stews
+- **Seafood & Fish Stews**: Fish stews, seafood mixes, and ocean-inspired flavors
+- **Fusion Stews**: Cultural and traditional varieties (e.g., goulash, curries)
+- **Soups**: Warm, comforting soups
+- **Drinks**: Smoothies, juices, teas, and other beverages
+- **Pastries**: Baked goods such as cakes, cookies, pies, and breads
 
 ### Core Functionality
+- **Beautiful Web Interface**: Responsive design with category images and intuitive navigation
 - **Community-driven**: Users can upload and share their own recipes
-- **Feedback System**: Rate and comment on recipes (1-5 star rating)
-- **Category Filtering**: Browse recipes by specific categories
+- **Feedback System**: Interactive 5-star rating and comment system
+- **Category Filtering**: Browse recipes by specific categories with visual category cards
 - **User Management**: User registration and profile management
 - **Recipe Management**: Full CRUD operations for recipes
+- **Mobile-Friendly**: Responsive design that works on all devices
 
 ## Project Structure
 
 ```
 shei-deli/
 ├── config/
-│   ├── database.go    # Database configuration and initialization
-│   └── seed.go        # Initial data seeding
+│   ├── database.go         # Database configuration and initialization
+│   ├── seed.go            # Initial data seeding
+│   └── template_helpers.go # Template helper functions
 ├── controllers/
-│   ├── recipe_controllers.go    # Recipe-related endpoints
-│   ├── feedback_controllers.go  # Feedback and rating endpoints
-│   └── user_controllers.go      # User management endpoints
+│   ├── recipe_controllers.go    # Recipe-related API endpoints
+│   ├── feedback_controllers.go  # Feedback and rating API endpoints
+│   ├── user_controllers.go      # User management API endpoints
+│   └── web_controllers.go       # Web interface controllers
 ├── models/
-│   ├── recipe.go      # Recipe model with categories
+│   ├── recipe.go      # Recipe model with 10 categories
 │   ├── feedback.go    # Feedback and rating model
 │   └── user.go        # User model
 ├── routes/
-│   └── routes.go      # API route definitions
+│   └── routes.go      # API and web route definitions
+├── static/
+│   ├── css/style.css  # Application styles
+│   └── js/app.js      # Interactive JavaScript
+├── templates/
+│   ├── base.html      # Base template layout
+│   ├── index.html     # Home page with category grid
+│   ├── category.html  # Category recipe listings
+│   ├── recipe.html    # Recipe detail page
+│   ├── add-recipe.html # Recipe creation form
+│   └── register.html  # User registration form
+├── images/            # Category images
 ├── main.go            # Application entry point
 ├── main_test.go       # Test suite
 └── README.md          # This file
 ```
+
+## Web Interface
+
+The application features a beautiful, responsive web interface accessible at `http://localhost:8080`
+
+### Web Pages
+- `/` - Home page with category grid and featured recipes
+- `/category/:category` - Category-specific recipe listings
+- `/recipe/:id` - Detailed recipe view with ratings and comments
+- `/add-recipe` - Recipe creation form
+- `/register` - User registration
+- `/recipes` - All recipes with pagination
+- `/about` - About page
+
+### Features
+- **Visual Category Navigation**: Click on category images to browse recipes
+- **Interactive Recipe Cards**: Hover effects and click-to-view functionality
+- **Star Rating System**: Interactive 5-star rating for recipes
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- **Form Validation**: Client-side validation for better user experience
 
 ## API Endpoints
 
@@ -45,7 +87,7 @@ shei-deli/
 - `GET /health` - Application health status
 
 ### Categories
-- `GET /api/v1/categories` - Get all available recipe categories
+- `GET /api/v1/categories` - Get all 11 available recipe categories
 
 ### Recipes
 - `GET /api/v1/recipes` - Get all recipes (with optional category filter)
@@ -117,7 +159,7 @@ curl -X POST http://localhost:8080/api/v1/recipes \
     "description": "A nutritious vegan bowl",
     "ingredients": "1 cup quinoa, mixed vegetables, tahini",
     "instructions": "Cook quinoa, roast vegetables, assemble bowl",
-    "category": "vegan_meals",
+    "category": "plant_based_meals",
     "prep_time": 15,
     "cook_time": 25,
     "servings": 2,
@@ -128,7 +170,7 @@ curl -X POST http://localhost:8080/api/v1/recipes \
 
 ### Get Recipes by Category
 ```bash
-curl http://localhost:8080/api/v1/recipes/category/vegan_meals
+curl http://localhost:8080/api/v1/recipes/category/plant_based_meals
 ```
 
 ### Add Feedback to a Recipe
@@ -158,17 +200,35 @@ curl -X POST http://localhost:8080/api/v1/users/register \
 
 ## Recipe Categories
 
-### Vegan Meals (`vegan_meals`)
-Plant-based recipes that exclude all animal products.
+### Plant-Based Meals (`plant_based_meals`)
+Vegan/vegetarian options with no animal products.
 
 ### Kids' Meals (`kids_meals`)
-Fun, nutritious, and kid-friendly recipes.
+Fun, simple, and nutritious meals for children.
 
-### Weight Loss Meals (`weight_loss_meals`)
-Light, low-calorie recipes for healthy weight management.
+### Light Meals (`light_meals`)
+Low-calorie, balanced recipes for weight management.
 
-### Weight Gain Meals (`weight_gain_meals`)
-High-calorie, nutrient-dense recipes for healthy weight gain.
+### Hearty Meals (`hearty_meals`)
+High-calorie, energy-packed recipes for healthy weight gain.
+
+### Meat Stews (`meat_stews`)
+Beef, chicken, goat, lamb, and other meat-based stews.
+
+### Veggie Stews (`veggie_stews`)
+Lentil, bean, mushroom, and vegetable stews.
+
+### Seafood & Fish Stews (`seafood_stews`)
+Fish stews, seafood mixes, and ocean-inspired flavors.
+
+### Fusion Stews (`fusion_stews`)
+Cultural and traditional varieties (e.g., goulash, curries).
+
+### Soups (`soups`)
+Warm, comforting soups for every occasion.
+
+### Drinks (`drinks`)
+Smoothies, juices, teas, and other beverages.
 
 ## Contributing
 

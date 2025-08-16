@@ -1,0 +1,73 @@
+{{define "content"}}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+        <h2 class="text-center">Share Your Recipe</h2>
+        <p class="text-center" style="color: #666; margin-bottom: 2rem;">Add your delicious recipe to the Shei-deli community</p>
+        
+        <form id="recipeForm">
+            <div class="form-group">
+                <label for="title">Recipe Title *</label>
+                <input type="text" id="title" name="title" class="form-control" required placeholder="Enter recipe title">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="3" placeholder="Brief description of your recipe"></textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">Select a category</option>
+                        {{range .Categories}}
+                        <option value="{{.Key}}" {{if eq .Key $.SelectedCategory}}selected{{end}}>{{.Name}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="difficulty">Difficulty</label>
+                    <select id="difficulty" name="difficulty" class="form-control">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="prep_time">Prep Time (minutes)</label>
+                    <input type="number" id="prep_time" name="prep_time" class="form-control" min="0" placeholder="15">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cook_time">Cook Time (minutes)</label>
+                    <input type="number" id="cook_time" name="cook_time" class="form-control" min="0" placeholder="30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="servings">Servings</label>
+                    <input type="number" id="servings" name="servings" class="form-control" min="1" placeholder="4">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="ingredients">Ingredients *</label>
+                <textarea id="ingredients" name="ingredients" class="form-control" rows="8" required placeholder="List ingredients, one per line or separated by commas:&#10;&#10;2 cups flour&#10;1 cup sugar&#10;3 eggs&#10;1/2 cup butter"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="instructions">Instructions *</label>
+                <textarea id="instructions" name="instructions" class="form-control" rows="10" required placeholder="Step-by-step instructions:&#10;&#10;1. Preheat oven to 350°F&#10;2. Mix dry ingredients in a bowl&#10;3. Add wet ingredients and mix well&#10;4. Bake for 25-30 minutes"></textarea>
+            </div>
+            
+            <div class="text-center">
+                <button type="submit" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem;">Share Recipe</button>
+                <a href="/" class="btn btn-secondary" style="margin-left: 1rem;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

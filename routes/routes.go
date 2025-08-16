@@ -9,6 +9,22 @@ import (
 func SetupRoutes() *gin.Engine {
     router := gin.Default()
 
+    // Serve static files
+    router.Static("/static", "./static")
+    router.Static("/images", "./images")
+
+    // Load HTML templates
+    router.LoadHTMLGlob("templates/*")
+
+    // Web routes (HTML pages)
+    router.GET("/", controllers.HomeHandler)
+    router.GET("/category/:category", controllers.CategoryHandler)
+    router.GET("/recipe/:id", controllers.RecipeHandler)
+    router.GET("/add-recipe", controllers.AddRecipeHandler)
+    router.GET("/register", controllers.RegisterHandler)
+    router.GET("/recipes", controllers.AllRecipesHandler)
+    router.GET("/about", controllers.AboutHandler)
+
     // API version 1 group
     v1 := router.Group("/api/v1")
     {
@@ -51,10 +67,17 @@ func SetupRoutes() *gin.Engine {
             categories.GET("", func(c *gin.Context) {
                 c.JSON(200, gin.H{
                     "categories": []gin.H{
-                        {"key": "vegan_meals", "name": "Vegan Meals"},
+                        {"key": "plant_based_meals", "name": "Plant-Based Meals"},
                         {"key": "kids_meals", "name": "Kids' Meals"},
-                        {"key": "weight_loss_meals", "name": "Weight Loss Meals"},
-                        {"key": "weight_gain_meals", "name": "Weight Gain Meals"},
+                        {"key": "light_meals", "name": "Light Meals (Weight Loss)"},
+                        {"key": "hearty_meals", "name": "Hearty Meals (Weight Gain)"},
+                        {"key": "meat_stews", "name": "Meat Stews"},
+                        {"key": "veggie_stews", "name": "Veggie Stews"},
+                        {"key": "seafood_stews", "name": "Seafood & Fish Stews"},
+                        {"key": "fusion_stews", "name": "Fusion Stews"},
+                        {"key": "soups", "name": "Soups"},
+                        {"key": "drinks", "name": "Drinks"},
+                        {"key": "pastries", "name": "Pastries"},
                     },
                 })
             })

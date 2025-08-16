@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shei-deli Recipe Platform - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav li {
+            margin: 0 1rem;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .category-content {
+            padding: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .category-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .demo-note {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .demo-note h3 {
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav li {
+                margin: 0.25rem 0;
+            }
+            
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Shei-deli</h1>
+            <p>Your Community Recipe Sharing Platform</p>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#recipes">All Recipes</a></li>
+                <li><a href="#add">Add Recipe</a></li>
+                <li><a href="#join">Join Community</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="demo-note">
+            <h3>🎉 UI Demo - Shei-deli Recipe Platform</h3>
+            <p>This is a preview of the beautiful web interface for the Shei-deli recipe application. Click on any category card below to explore recipes!</p>
+        </div>
+
+        <div style="text-align: center; margin: 2rem 0;">
+            <h2>Discover Amazing Recipes</h2>
+            <p>Explore our diverse collection of recipes organized by categories</p>
+        </div>
+
+        <div class="category-grid">
+            <div class="category-card" onclick="alert('Navigate to Plant-Based Meals')">
+                <div class="category-image">🌱</div>
+                <div class="category-content">
+                    <h3 class="category-title">Plant-Based Meals</h3>
+                    <p class="category-description">Vegan/vegetarian options (no animal products)</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Kids Meals')">
+                <div class="category-image">🧸</div>
+                <div class="category-content">
+                    <h3 class="category-title">Kids' Meals</h3>
+                    <p class="category-description">Fun, simple, and nutritious meals for children</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Light Meals')">
+                <div class="category-image">⚖️</div>
+                <div class="category-content">
+                    <h3 class="category-title">Light Meals (Weight Loss)</h3>
+                    <p class="category-description">Low-calorie, balanced recipes</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Hearty Meals')">
+                <div class="category-image">🍲</div>
+                <div class="category-content">
+                    <h3 class="category-title">Hearty Meals (Weight Gain)</h3>
+                    <p class="category-description">High-calorie, energy-packed recipes</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Meat Stews')">
+                <div class="category-image">🍖</div>
+                <div class="category-content">
+                    <h3 class="category-title">Meat Stews</h3>
+                    <p class="category-description">Beef, chicken, goat, lamb, and other meat-based stews</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Veggie Stews')">
+                <div class="category-image">🥕</div>
+                <div class="category-content">
+                    <h3 class="category-title">Veggie Stews</h3>
+                    <p class="category-description">Lentil, bean, mushroom, and vegetable stews</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Seafood Stews')">
+                <div class="category-image">🐟</div>
+                <div class="category-content">
+                    <h3 class="category-title">Seafood & Fish Stews</h3>
+                    <p class="category-description">Fish stews, seafood mixes, and ocean-inspired flavors</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Fusion Stews')">
+                <div class="category-image">🌍</div>
+                <div class="category-content">
+                    <h3 class="category-title">Fusion Stews</h3>
+                    <p class="category-description">Cultural and traditional varieties (e.g., goulash, curries)</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Soups')">
+                <div class="category-image">🍜</div>
+                <div class="category-content">
+                    <h3 class="category-title">Soups</h3>
+                    <p class="category-description">Warm, comforting soups</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Drinks')">
+                <div class="category-image">🥤</div>
+                <div class="category-content">
+                    <h3 class="category-title">Drinks</h3>
+                    <p class="category-description">Smoothies, juices, teas, and other beverages</p>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="alert('Navigate to Pastries')">
+                <div class="category-image">🥐</div>
+                <div class="category-content">
+                    <h3 class="category-title">Pastries</h3>
+                    <p class="category-description">Baked goods such as cakes, cookies, pies, and breads</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-top: 3rem; text-align: center;">
+            <h3>🚀 Ready to Start Cooking?</h3>
+            <p style="margin: 1rem 0;">Join our community of food lovers and start sharing your favorite recipes!</p>
+            <div style="margin-top: 1.5rem;">
+                <button style="background: #667eea; color: white; border: none; padding: 1rem 2rem; border-radius: 5px; font-size: 1rem; margin: 0.5rem; cursor: pointer;" onclick="alert('Join Community')">Join Community</button>
+                <button style="background: #6c757d; color: white; border: none; padding: 1rem 2rem; border-radius: 5px; font-size: 1rem; margin: 0.5rem; cursor: pointer;" onclick="alert('Add Recipe')">Share a Recipe</button>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: #333; color: white; text-align: center; padding: 2rem 0; margin-top: 4rem;">
+        <div class="container">
+            <p>&copy; 2024 Shei-deli Recipe Platform. Made with ❤️ for food lovers.</p>
+            <p>Share your recipes, discover new flavors, build community.</p>
+        </div>
+    </footer>
+</body>
+</html>
