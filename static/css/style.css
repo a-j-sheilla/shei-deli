@@ -97,7 +97,32 @@ body {
 .category-image {
     width: 100%;
     height: 200px;
-    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.category-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+    z-index: 1;
+}
+
+.category-image-overlay {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .category-content {
