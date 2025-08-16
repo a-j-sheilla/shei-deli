@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shei-deli Integration Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .category-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        .recipe-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍽️ Shei-deli Backend Integration Test</h1>
+    <p>This page tests the connection between the frontend and backend API endpoints.</p>
+
+    <div class="test-section">
+        <h2>🏥 Health Check</h2>
+        <button class="test-button" onclick="testHealthCheck()">Test Health Endpoint</button>
+        <div id="health-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📂 Categories</h2>
+        <button class="test-button" onclick="testCategories()">Load Categories</button>
+        <div id="categories-result" class="result" style="display: none;"></div>
+        <div id="categories-grid" class="category-grid"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🍳 Recipes</h2>
+        <button class="test-button" onclick="testRecipes()">Load All Recipes</button>
+        <button class="test-button" onclick="testRecipesByCategory()">Load Plant-Based Recipes</button>
+        <div id="recipes-result" class="result" style="display: none;"></div>
+        <div id="recipes-list"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>➕ Add Recipe</h2>
+        <button class="test-button" onclick="testAddRecipe()">Add Test Recipe</button>
+        <div id="add-recipe-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>⭐ Feedback</h2>
+        <button class="test-button" onclick="testAddFeedback()">Add Test Feedback</button>
+        <div id="feedback-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>👥 Users</h2>
+        <button class="test-button" onclick="testRegisterUser()">Register Test User</button>
+        <div id="user-result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api/v1';
+
+        function showResult(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${isError ? 'error' : 'success'}`;
+            element.innerHTML = message;
+        }
+
+        async function testHealthCheck() {
+            try {
+                const response = await fetch('http://localhost:8080/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('health-result', `✅ Health check passed: ${JSON.stringify(data)}`);
+                } else {
+                    showResult('health-result', `❌ Health check failed: ${response.status}`, true);
+                }
+            } catch (error) {
+                showResult('health-result', `❌ Connection error: ${error.message}. Make sure the server is running on port 8080.`, true);
+            }
+        }
+
+        async function testCategories() {
+            try {
+                const response = await fetch(`${API_BASE}/categories`);
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('categories-result', `✅ Loaded ${data.categories.length} categories`);
+                    
+                    // Display categories
+                    const grid = document.getElementById('categories-grid');
+                    grid.innerHTML = '';
+                    data.categories.forEach(cat => {
+                        const card = document.createElement('div');
+                        card.className = 'category-card';
+                        card.innerHTML = `<strong>${cat.name}</strong><br><small>${cat.key}</small>`;
+                        grid.appendChild(card);
+                    });
+                } else {
+                    showResult('categories-result', `❌ Failed to load categories: ${response.status}`, true);
+                }
+            } catch (error) {
+                showResult('categories-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        async function testRecipes() {
+            try {
+                const response = await fetch(`${API_BASE}/recipes`);
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('recipes-result', `✅ Loaded ${data.recipes.length} recipes`);
+                    
+                    // Display recipes
+                    const list = document.getElementById('recipes-list');
+                    list.innerHTML = '';
+                    data.recipes.slice(0, 5).forEach(recipe => {
+                        const item = document.createElement('div');
+                        item.className = 'recipe-item';
+                        item.innerHTML = `
+                            <strong>${recipe.title}</strong><br>
+                            <small>Category: ${recipe.category} | Rating: ${recipe.average_rating.toFixed(1)}</small><br>
+                            ${recipe.description}
+                        `;
+                        list.appendChild(item);
+                    });
+                } else {
+                    showResult('recipes-result', `❌ Failed to load recipes: ${response.status}`, true);
+                }
+            } catch (error) {
+                showResult('recipes-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        async function testRecipesByCategory() {
+            try {
+                const response = await fetch(`${API_BASE}/recipes/category/plant_based_meals`);
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('recipes-result', `✅ Loaded ${data.recipes.length} plant-based recipes`);
+                    
+                    // Display recipes
+                    const list = document.getElementById('recipes-list');
+                    list.innerHTML = '';
+                    data.recipes.forEach(recipe => {
+                        const item = document.createElement('div');
+                        item.className = 'recipe-item';
+                        item.innerHTML = `
+                            <strong>${recipe.title}</strong><br>
+                            <small>Category: ${data.category} | Rating: ${recipe.average_rating.toFixed(1)}</small><br>
+                            ${recipe.description}
+                        `;
+                        list.appendChild(item);
+                    });
+                } else {
+                    showResult('recipes-result', `❌ Failed to load category recipes: ${response.status}`, true);
+                }
+            } catch (error) {
+                showResult('recipes-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        async function testAddRecipe() {
+            const testRecipe = {
+                title: "Test Integration Recipe",
+                description: "A test recipe to verify frontend-backend integration",
+                ingredients: "1 cup test ingredients\n2 tbsp integration sauce\n1 pinch of success",
+                instructions: "1. Mix all ingredients\n2. Test the connection\n3. Verify it works",
+                category: "plant_based_meals",
+                prep_time: 10,
+                cook_time: 15,
+                servings: 2,
+                difficulty: "Easy",
+                user_id: 1
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/recipes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testRecipe)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('add-recipe-result', `✅ Recipe created successfully! ID: ${data.ID}`);
+                } else {
+                    const error = await response.json();
+                    showResult('add-recipe-result', `❌ Failed to create recipe: ${error.error}`, true);
+                }
+            } catch (error) {
+                showResult('add-recipe-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        async function testAddFeedback() {
+            const testFeedback = {
+                recipe_id: 1,
+                user_id: 1,
+                comment: "This integration test recipe is amazing!",
+                rating: 5
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/feedback`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testFeedback)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('feedback-result', `✅ Feedback added successfully! ID: ${data.ID}`);
+                } else {
+                    const error = await response.json();
+                    showResult('feedback-result', `❌ Failed to add feedback: ${error.error}`, true);
+                }
+            } catch (error) {
+                showResult('feedback-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        async function testRegisterUser() {
+            const testUser = {
+                username: "testuser_" + Date.now(),
+                email: "test_" + Date.now() + "@example.com",
+                password: "testpassword123",
+                first_name: "Test",
+                last_name: "User",
+                bio: "Integration test user"
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testUser)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('user-result', `✅ User registered successfully! Username: ${data.user.username}`);
+                } else {
+                    const error = await response.json();
+                    showResult('user-result', `❌ Failed to register user: ${error.error}`, true);
+                }
+            } catch (error) {
+                showResult('user-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        // Auto-run health check on page load
+        window.addEventListener('load', function() {
+            setTimeout(testHealthCheck, 1000);
+        });
+    </script>
+</body>
+</html>

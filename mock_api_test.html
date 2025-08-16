@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shei-deli Mock API Test</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Shei-deli</h1>
+            <p>Frontend-Backend Integration Demo (Mock API)</p>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#recipes">All Recipes</a></li>
+                <li><a href="#add">Add Recipe</a></li>
+                <li><a href="#test">API Test</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 10px; padding: 1.5rem; margin: 2rem 0; text-align: center;">
+            <h3>🧪 Mock API Integration Demo</h3>
+            <p>This demonstrates how the frontend connects to the backend API using mock data.</p>
+            <p><strong>Note:</strong> This uses simulated API responses to show the integration flow.</p>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2>🔗 API Integration Tests</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                <button class="btn" onclick="testCategories()">Load Categories</button>
+                <button class="btn" onclick="testRecipes()">Load Recipes</button>
+                <button class="btn" onclick="testAddRecipe()">Add Recipe</button>
+                <button class="btn" onclick="testFeedback()">Add Feedback</button>
+            </div>
+            
+            <div id="api-results" style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 5px; min-height: 100px;">
+                <p>Click any button above to test API integration...</p>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2>📂 Categories Display</h2>
+            <div id="categories-display" class="category-grid">
+                <!-- Categories will be loaded here -->
+            </div>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+            <h2>🍳 Recipes Display</h2>
+            <div id="recipes-display" class="recipe-grid">
+                <!-- Recipes will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mock API data to simulate backend responses
+        const mockData = {
+            categories: {
+                categories: [
+                    {key: "plant_based_meals", name: "Plant-Based Meals", image: "vegan.jpeg"},
+                    {key: "kids_meals", name: "Kids' Meals", image: "kids-meals.jpeg"},
+                    {key: "light_meals", name: "Light Meals (Weight Loss)", image: "light-meals.jpeg"},
+                    {key: "hearty_meals", name: "Hearty Meals (Weight Gain)", image: "hearty-meals.jpeg"},
+                    {key: "meat_stews", name: "Meat Stews", image: "stews.jpeg"},
+                    {key: "veggie_stews", name: "Veggie Stews", image: "vegetable-stews.jpeg"},
+                    {key: "seafood_stews", name: "Seafood & Fish Stews", image: "fish&sea-food.jpeg"},
+                    {key: "fusion_stews", name: "Fusion Stews", image: "fusion.jpeg"},
+                    {key: "soups", name: "Soups", image: "soups.jpeg"},
+                    {key: "drinks", name: "Drinks", image: "drinks&smoothies.jpeg"},
+                    {key: "pastries", name: "Pastries", image: "pastries.jpeg"}
+                ]
+            },
+            recipes: {
+                recipes: [
+                    {
+                        ID: 1,
+                        title: "Quinoa Buddha Bowl",
+                        description: "A nutritious and colorful vegan bowl packed with protein and vegetables",
+                        category: "plant_based_meals",
+                        prep_time: 15,
+                        cook_time: 25,
+                        servings: 2,
+                        difficulty: "Easy",
+                        average_rating: 4.8,
+                        user: {username: "admin"}
+                    },
+                    {
+                        ID: 2,
+                        title: "Mini Veggie Pizzas",
+                        description: "Fun and healthy mini pizzas that kids will love",
+                        category: "kids_meals",
+                        prep_time: 10,
+                        cook_time: 12,
+                        servings: 4,
+                        difficulty: "Easy",
+                        average_rating: 4.5,
+                        user: {username: "admin"}
+                    },
+                    {
+                        ID: 3,
+                        title: "Classic Chocolate Chip Cookies",
+                        description: "Soft and chewy chocolate chip cookies that everyone loves",
+                        category: "pastries",
+                        prep_time: 15,
+                        cook_time: 10,
+                        servings: 24,
+                        difficulty: "Easy",
+                        average_rating: 4.9,
+                        user: {username: "admin"}
+                    }
+                ]
+            }
+        };
+
+        function showResults(message, isSuccess = true) {
+            const results = document.getElementById('api-results');
+            results.innerHTML = `
+                <div style="padding: 1rem; border-radius: 5px; background: ${isSuccess ? '#d4edda' : '#f8d7da'}; border-left: 4px solid ${isSuccess ? '#28a745' : '#dc3545'};">
+                    ${message}
+                </div>
+            `;
+        }
+
+        function testCategories() {
+            showResults('🔄 Loading categories...');
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                const data = mockData.categories;
+                showResults(`✅ Successfully loaded ${data.categories.length} categories from API`);
+                
+                // Display categories
+                const container = document.getElementById('categories-display');
+                container.innerHTML = '';
+                
+                data.categories.forEach(category => {
+                    const card = document.createElement('div');
+                    card.className = 'category-card';
+                    card.innerHTML = `
+                        <div class="category-image" style="background-image: url('images/${category.image}');">
+                            <div class="category-image-overlay">${category.name}</div>
+                        </div>
+                        <div class="category-content">
+                            <h3 class="category-title">${category.name}</h3>
+                            <p class="category-description">Category: ${category.key}</p>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => {
+                        alert(`Navigate to ${category.name} recipes`);
+                    });
+                    container.appendChild(card);
+                });
+            }, 500);
+        }
+
+        function testRecipes() {
+            showResults('🔄 Loading recipes...');
+            
+            setTimeout(() => {
+                const data = mockData.recipes;
+                showResults(`✅ Successfully loaded ${data.recipes.length} recipes from API`);
+                
+                // Display recipes
+                const container = document.getElementById('recipes-display');
+                container.innerHTML = '';
+                
+                data.recipes.forEach(recipe => {
+                    const card = document.createElement('div');
+                    card.className = 'recipe-card';
+                    card.innerHTML = `
+                        <div class="recipe-image"></div>
+                        <div class="recipe-content">
+                            <h3 class="recipe-title">${recipe.title}</h3>
+                            <p class="recipe-description">${recipe.description}</p>
+                            <div class="recipe-meta">
+                                <span>${recipe.prep_time + recipe.cook_time} min • ${recipe.servings} servings</span>
+                                <div class="rating">
+                                    <span class="stars">${'★'.repeat(Math.floor(recipe.average_rating))}</span>
+                                    <span>${recipe.average_rating}</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">
+                                by ${recipe.user.username} • ${recipe.category}
+                            </div>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => {
+                        alert(`View recipe: ${recipe.title}`);
+                    });
+                    container.appendChild(card);
+                });
+            }, 800);
+        }
+
+        function testAddRecipe() {
+            showResults('🔄 Adding new recipe...');
+            
+            const newRecipe = {
+                title: "Test Integration Recipe",
+                description: "A test recipe to demonstrate API integration",
+                category: "plant_based_meals",
+                prep_time: 10,
+                cook_time: 15,
+                servings: 2,
+                difficulty: "Easy"
+            };
+            
+            setTimeout(() => {
+                showResults(`✅ Recipe "${newRecipe.title}" added successfully! (Mock API)`);
+            }, 1000);
+        }
+
+        function testFeedback() {
+            showResults('🔄 Adding feedback...');
+            
+            const feedback = {
+                recipe_id: 1,
+                rating: 5,
+                comment: "Amazing recipe! The integration works perfectly."
+            };
+            
+            setTimeout(() => {
+                showResults(`✅ Feedback added successfully! Rating: ${feedback.rating}/5 (Mock API)`);
+            }, 700);
+        }
+
+        // Auto-load categories on page load
+        window.addEventListener('load', function() {
+            setTimeout(testCategories, 1000);
+        });
+    </script>
+</body>
+</html>
