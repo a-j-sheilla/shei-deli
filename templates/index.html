@@ -7,7 +7,9 @@
 <div class="category-grid">
     {{range .Categories}}
     <div class="category-card" data-category="{{.Key}}">
-        <img src="/images/{{.Image}}" alt="{{.Name}}" class="category-image">
+        <div class="category-image" style="background-image: url('/images/{{.Image}}');">
+            <div class="category-image-overlay">{{.Name}}</div>
+        </div>
         <div class="category-content">
             <h3 class="category-title">{{.Name}}</h3>
             <p class="category-description">{{.Description}}</p>
