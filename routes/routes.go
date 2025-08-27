@@ -19,7 +19,7 @@ func SetupRoutes() *gin.Engine {
     router.GET("/recipe/:id", controllers.RecipeHandler)
     router.GET("/add-recipe", controllers.AddRecipeHandler)
     router.GET("/register", controllers.RegisterHandler)
-    router.GET("/recipes", controllers.AllRecipesHandler)
+    router.GET("/featured", controllers.FeaturedHandler)
     router.GET("/about", controllers.AboutHandler)
 
     // API version 1 group

@@ -3,7 +3,9 @@ package controllers
 import (
     "database/sql"
     "net/http"
+    "sort"
     "strconv"
+    "time"
     "shei-deli/models"
     "shei-deli/config"
     "github.com/gin-gonic/gin"
@@ -230,15 +232,15 @@ func RegisterHandler(c *gin.Context) {
     })
 }
 
-// AllRecipesHandler serves all recipes page
-func AllRecipesHandler(c *gin.Context) {
+// FeaturedHandler serves featured recipes page (highly-rated and popular recipes)
+func FeaturedHandler(c *gin.Context) {
     page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
     limit := 12
     offset := (page - 1) * limit
 
-    var recipes []models.Recipe
-    if err := config.DB.Preload("User").Preload("Feedbacks").
-        Offset(offset).Limit(limit).Find(&recipes).Error; err != nil {
+    // Get all recipes with their feedbacks to calculate ratings
+    var allRecipes []models.Recipe
+    if err := config.DB.Preload("User").Preload("Feedbacks").Find(&allRecipes).Error; err != nil {
         c.HTML(http.StatusInternalServerError, "error.html", gin.H{
             "Title": "Error",
             "Error": "Failed to load recipes.",
@@ -246,24 +248,55 @@ func AllRecipesHandler(c *gin.Context) {
         return
     }
 
-    // Calculate average ratings
-    for i := range recipes {
+    // Calculate average ratings and filter featured recipes
+    var featuredRecipes []models.Recipe
+    for i := range allRecipes {
         var avgRating sql.NullFloat64
-        config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", recipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
+        config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", allRecipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
         if avgRating.Valid {
-            recipes[i].AverageRating = avgRating.Float64
+            allRecipes[i].AverageRating = avgRating.Float64
         } else {
-            recipes[i].AverageRating = 0.0
+            allRecipes[i].AverageRating = 0.0
+        }
+
+        // Featured criteria: rating >= 4.0 OR has 2+ feedbacks OR is recent (created in last 30 days)
+        feedbackCount := len(allRecipes[i].Feedbacks)
+        isRecent := allRecipes[i].CreatedAt.After(time.Now().AddDate(0, 0, -30))
+
+        if allRecipes[i].AverageRating >= 4.0 || feedbackCount >= 2 || isRecent {
+            featuredRecipes = append(featuredRecipes, allRecipes[i])
         }
     }
 
-    var totalRecipes int64
-    config.DB.Model(&models.Recipe{}).Count(&totalRecipes)
-    totalPages := (int(totalRecipes) + limit - 1) / limit
+    // Sort featured recipes by rating (descending), then by feedback count, then by creation date
+    sort.Slice(featuredRecipes, func(i, j int) bool {
+        if featuredRecipes[i].AverageRating != featuredRecipes[j].AverageRating {
+            return featuredRecipes[i].AverageRating > featuredRecipes[j].AverageRating
+        }
+        if len(featuredRecipes[i].Feedbacks) != len(featuredRecipes[j].Feedbacks) {
+            return len(featuredRecipes[i].Feedbacks) > len(featuredRecipes[j].Feedbacks)
+        }
+        return featuredRecipes[i].CreatedAt.After(featuredRecipes[j].CreatedAt)
+    })
 
-    c.HTML(http.StatusOK, "all-recipes.html", gin.H{
-        "Title":       "All Recipes",
-        "Recipes":     recipes,
+    // Apply pagination to featured recipes
+    totalFeatured := len(featuredRecipes)
+    totalPages := (totalFeatured + limit - 1) / limit
+
+    start := offset
+    end := offset + limit
+    if start > totalFeatured {
+        start = totalFeatured
+    }
+    if end > totalFeatured {
+        end = totalFeatured
+    }
+
+    paginatedRecipes := featuredRecipes[start:end]
+
+    c.HTML(http.StatusOK, "featured.html", gin.H{
+        "Title":       "Featured Recipes",
+        "Recipes":     paginatedRecipes,
         "CurrentPage": page,
         "TotalPages":  totalPages,
         "HasNext":     page < totalPages,
