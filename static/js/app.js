@@ -60,29 +60,20 @@ function initializeForms() {
 // Handle Recipe Submission
 async function handleRecipeSubmission(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(event.target);
-    const recipeData = {
-        title: formData.get('title'),
-        description: formData.get('description'),
-        ingredients: formData.get('ingredients'),
-        instructions: formData.get('instructions'),
-        category: formData.get('category'),
-        prep_time: parseInt(formData.get('prep_time')) || 0,
-        cook_time: parseInt(formData.get('cook_time')) || 0,
-        servings: parseInt(formData.get('servings')) || 1,
-        difficulty: formData.get('difficulty'),
-        user_id: 1 // Default user for now
-    };
+
+    // Add default user_id if not present
+    if (!formData.get('user_id')) {
+        formData.append('user_id', '1'); // Default user for now
+    }
 
     try {
         showLoading('Saving recipe...');
         const response = await fetch(`${API_BASE}/recipes`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(recipeData)
+            // Don't set Content-Type header - let browser set it for multipart/form-data
+            body: formData
         });
 
         if (response.ok) {

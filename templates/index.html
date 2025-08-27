@@ -50,27 +50,7 @@
             {{end}}
         </div>
 
-        <section class="featured-recipes mt-2">
-            <h2 class="text-center mb-2">Featured Recipes</h2>
-            <div class="recipe-grid">
-                {{range .FeaturedRecipes}}
-                <div class="recipe-card" data-recipe-id="{{.ID}}">
-                    <div class="recipe-image"></div>
-                    <div class="recipe-content">
-                        <h3 class="recipe-title">{{.Title}}</h3>
-                        <p class="recipe-description">{{.Description}}</p>
-                        <div class="recipe-meta">
-                            <span>{{add .PrepTime .CookTime}} min</span>
-                            <div class="rating">
-                                <span class="stars">{{stars .AverageRating}}</span>
-                                <span>{{printf "%.1f" .AverageRating}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{end}}
-            </div>
-        </section>
+
 
         <section class="stats-section mt-2 text-center">
             <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">

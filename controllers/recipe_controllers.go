@@ -4,10 +4,15 @@ import (
     "database/sql"
     "encoding/json"
     "fmt"
+    "io"
     "io/ioutil"
     "log"
     "net/http"
+    "os"
+    "path/filepath"
     "strconv"
+    "strings"
+    "time"
     "shei-deli/models"
     "shei-deli/config"
     "github.com/gin-gonic/gin"
@@ -124,8 +129,112 @@ func GetSpoonacularRecipes(c *gin.Context) {
     c.JSON(http.StatusOK, result)
 }
 
-// AddRecipe creates a new recipe in the database
+// AddRecipe creates a new recipe in the database with optional image upload
 func AddRecipe(c *gin.Context) {
+    // Check if this is a multipart form (from web form) or JSON (from API)
+    contentType := c.GetHeader("Content-Type")
+
+    if strings.Contains(contentType, "multipart/form-data") {
+        handleRecipeFormUpload(c)
+    } else {
+        handleRecipeJSONUpload(c)
+    }
+}
+
+// handleRecipeFormUpload handles multipart form data with file upload
+func handleRecipeFormUpload(c *gin.Context) {
+    // Parse form data
+    title := c.PostForm("title")
+    description := c.PostForm("description")
+    ingredients := c.PostForm("ingredients")
+    instructions := c.PostForm("instructions")
+    category := c.PostForm("category")
+    difficulty := c.PostForm("difficulty")
+
+    // Parse numeric fields
+    prepTime, _ := strconv.Atoi(c.PostForm("prep_time"))
+    cookTime, _ := strconv.Atoi(c.PostForm("cook_time"))
+    servings, _ := strconv.Atoi(c.PostForm("servings"))
+    userID, _ := strconv.ParseUint(c.PostForm("user_id"), 10, 32)
+
+    // Validate required fields
+    if title == "" || ingredients == "" || instructions == "" || category == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Title, ingredients, instructions, and category are required"})
+        return
+    }
+
+    // Validate category
+    if !models.IsValidCategory(category) {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category"})
+        return
+    }
+
+    // Handle image upload
+    imageURL := ""
+    file, header, err := c.Request.FormFile("image")
+    if err == nil && header != nil {
+        defer file.Close()
+
+        // Generate unique filename
+        ext := filepath.Ext(header.Filename)
+        filename := fmt.Sprintf("recipe_%d_%s%s", time.Now().Unix(), strings.ReplaceAll(title, " ", "_"), ext)
+        uploadPath := filepath.Join("static", "uploads", filename)
+
+        // Create upload directory if it doesn't exist
+        os.MkdirAll(filepath.Dir(uploadPath), 0755)
+
+        // Save file
+        dst, err := os.Create(uploadPath)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+            return
+        }
+        defer dst.Close()
+
+        if _, err := io.Copy(dst, file); err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+            return
+        }
+
+        imageURL = "/" + uploadPath
+    } else {
+        // Use default category image if no image uploaded
+        imageURL = getCategoryDefaultImage(models.RecipeCategory(category))
+    }
+
+    // Set default user ID if not provided
+    if userID == 0 {
+        userID = 1 // Default to admin user
+    }
+
+    // Create recipe
+    newRecipe := models.Recipe{
+        Title:        title,
+        Description:  description,
+        Ingredients:  ingredients,
+        Instructions: instructions,
+        Category:     models.RecipeCategory(category),
+        PrepTime:     prepTime,
+        CookTime:     cookTime,
+        Servings:     servings,
+        Difficulty:   difficulty,
+        ImageURL:     imageURL,
+        UserID:       uint(userID),
+    }
+
+    if err := config.DB.Create(&newRecipe).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Error saving recipe to the database"})
+        return
+    }
+
+    // Load the user relationship for the response
+    config.DB.Preload("User").First(&newRecipe, newRecipe.ID)
+
+    c.JSON(http.StatusCreated, newRecipe)
+}
+
+// handleRecipeJSONUpload handles JSON data (for API calls)
+func handleRecipeJSONUpload(c *gin.Context) {
     var newRecipe models.Recipe
     if err := c.ShouldBindJSON(&newRecipe); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data format"})
@@ -144,6 +253,11 @@ func AddRecipe(c *gin.Context) {
         return
     }
 
+    // Set default image if not provided
+    if newRecipe.ImageURL == "" {
+        newRecipe.ImageURL = getCategoryDefaultImage(newRecipe.Category)
+    }
+
     // For now, use a default user ID (in a real app, this would come from authentication)
     if newRecipe.UserID == 0 {
         newRecipe.UserID = 1 // Default to admin user
@@ -158,6 +272,29 @@ func AddRecipe(c *gin.Context) {
     config.DB.Preload("User").First(&newRecipe, newRecipe.ID)
 
     c.JSON(http.StatusCreated, newRecipe)
+}
+
+// getCategoryDefaultImage returns the default image path for a category
+func getCategoryDefaultImage(category models.RecipeCategory) string {
+    categoryImages := map[models.RecipeCategory]string{
+        models.PlantBasedMeals: "/images/vegan.jpeg",
+        models.KidsMeals:       "/images/kids-meals.jpeg",
+        models.LightMeals:      "/images/light-meals.jpeg",
+        models.HeartyMeals:     "/images/hearty-meals.jpeg",
+        models.MeatStews:       "/images/stews.jpeg",
+        models.VeggieStews:     "/images/vegetable-stews.jpeg",
+        models.SeafoodStews:    "/images/fish&sea-food.jpeg",
+        models.FusionStews:     "/images/fusion.jpeg",
+        models.Soups:           "/images/soups.jpeg",
+        models.Drinks:          "/images/drinks&smoothies.jpeg",
+        models.Pastries:        "/images/pastries.jpeg",
+    }
+
+    if imagePath, exists := categoryImages[category]; exists {
+        return imagePath
+    }
+
+    return "/images/background.jpeg"
 }
 
 // UpdateRecipe updates an existing recipe

@@ -100,26 +100,6 @@ func getCategories() []Category {
 
 // HomeHandler serves the home page
 func HomeHandler(c *gin.Context) {
-    // Get featured recipes (top rated)
-    var featuredRecipes []models.Recipe
-    config.DB.Preload("User").Preload("Feedbacks").
-        Joins("LEFT JOIN feedbacks ON recipes.id = feedbacks.recipe_id").
-        Group("recipes.id").
-        Order("AVG(feedbacks.rating) DESC").
-        Limit(6).
-        Find(&featuredRecipes)
-
-    // Calculate average ratings
-    for i := range featuredRecipes {
-        var avgRating sql.NullFloat64
-        config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", featuredRecipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
-        if avgRating.Valid {
-            featuredRecipes[i].AverageRating = avgRating.Float64
-        } else {
-            featuredRecipes[i].AverageRating = 0.0
-        }
-    }
-
     // Get stats
     var stats Stats
     config.DB.Model(&models.Recipe{}).Count(&stats.TotalRecipes)
@@ -127,10 +107,9 @@ func HomeHandler(c *gin.Context) {
     config.DB.Model(&models.Feedback{}).Count(&stats.TotalFeedback)
 
     c.HTML(http.StatusOK, "index.html", gin.H{
-        "Title":           "Home",
-        "Categories":      getCategories(),
-        "FeaturedRecipes": featuredRecipes,
-        "Stats":           stats,
+        "Title":      "Home",
+        "Categories": getCategories(),
+        "Stats":      stats,
     })
 }
 
