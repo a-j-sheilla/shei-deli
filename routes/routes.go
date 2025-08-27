@@ -58,6 +58,8 @@ func SetupRoutes() *gin.Engine {
             users.GET("/:id/recipes", controllers.GetUserRecipes)           // Get user's recipes
         }
 
+
+
         // Category routes (for getting category information)
         categories := v1.Group("/categories")
         {

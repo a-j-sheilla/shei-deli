@@ -1,4 +1,36 @@
-{{define "content"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Shei-deli Recipe Platform</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Shei-deli</h1>
+            <p>Your Community Recipe Sharing Platform</p>
+            <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.9;">
+                Discover amazing recipes from around the world with AI-powered recommendations
+            </p>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/recipes">All Recipes</a></li>
+                <li><a href="/add-recipe">Add Recipe</a></li>
+                <li><a href="/register">Join Community</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
 <div class="recipe-detail">
     <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-bottom: 2rem;">
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
@@ -32,9 +64,9 @@
                 </div>
                 
                 <div style="margin: 1rem 0;">
-                    <strong>Category:</strong> 
+                    <strong>Category:</strong>
                     <a href="/category/{{.Recipe.Category}}" style="color: #667eea; text-decoration: none;">
-                        {{.Recipe.Category.GetDisplayName}}
+                        {{.Recipe.Category}}
                     </a>
                 </div>
                 
@@ -146,4 +178,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-{{end}}
+    </main>
+
+    <footer style="background: #333; color: white; text-align: center; padding: 2rem 0; margin-top: 4rem;">
+        <div class="container">
+            <p>&copy; 2024 Shei-deli Recipe Platform. Made with ❤️ for food lovers.</p>
+            <p>Share your recipes, discover new flavors, build community.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

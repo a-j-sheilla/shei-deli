@@ -1,42 +1,164 @@
-{{define "content"}}
-<div class="category-header text-center mb-2">
-    <h2>{{.CategoryName}}</h2>
-    <p>{{.CategoryDescription}}</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Shei-deli Recipe Platform</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Shei-deli</h1>
+            <p>Your Community Recipe Sharing Platform</p>
+            <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.9;">
+                Discover amazing recipes from around the world with AI-powered recommendations
+            </p>
+        </div>
+    </header>
 
-{{if .Recipes}}
-<div class="recipe-grid">
-    {{range .Recipes}}
-    <div class="recipe-card" data-recipe-id="{{.ID}}">
-        <div class="recipe-image"></div>
-        <div class="recipe-content">
-            <h3 class="recipe-title">{{.Title}}</h3>
-            <p class="recipe-description">{{.Description}}</p>
-            <div class="recipe-meta">
-                <span>{{add .PrepTime .CookTime}} min • {{.Servings}} servings</span>
-                <div class="rating">
-                    <span class="stars">{{stars .AverageRating}}</span>
-                    <span>{{printf "%.1f" .AverageRating}}</span>
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/recipes">All Recipes</a></li>
+                <li><a href="/add-recipe">Add Recipe</a></li>
+                <li><a href="/register">Join Community</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="category-header text-center mb-2">
+            <h2>{{.CategoryName}}</h2>
+            <p>{{.CategoryDescription}}</p>
+        </div>
+
+        {{if .Recipes}}
+        <div class="recipe-grid">
+            {{range .Recipes}}
+            <div class="recipe-card" data-recipe-id="{{.ID}}" onclick="window.location.href='/recipe/{{.ID}}'">
+                <div class="recipe-image"></div>
+                <div class="recipe-content">
+                    <h3 class="recipe-title">{{.Title}}</h3>
+                    <p class="recipe-description">{{.Description}}</p>
+                    <div class="recipe-meta">
+                        <span>{{add .PrepTime .CookTime}} min • {{.Servings}} servings</span>
+                        <div class="rating">
+                            <span class="stars">{{stars .AverageRating}}</span>
+                            <span>{{printf "%.1f" .AverageRating}}</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">
+                        by {{.User.GetDisplayName}}
+                    </div>
                 </div>
             </div>
-            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">
-                by {{.User.GetDisplayName}}
+            {{end}}
+        </div>
+        {{else}}
+        <div class="text-center mt-2">
+            <div style="background: white; padding: 3rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                <h3>No recipes found in this category yet</h3>
+                <p>Be the first to share a recipe in this category!</p>
+                <a href="/add-recipe?category={{.CategoryKey}}" class="btn">Add First Recipe</a>
             </div>
         </div>
-    </div>
-    {{end}}
-</div>
-{{else}}
-<div class="text-center mt-2">
-    <div style="background: white; padding: 3rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
-        <h3>No recipes found in this category yet</h3>
-        <p>Be the first to share a recipe in this category!</p>
-        <a href="/add-recipe?category={{.CategoryKey}}" class="btn">Add First Recipe</a>
-    </div>
-</div>
-{{end}}
+        {{end}}
 
-<div class="text-center mt-2">
-    <a href="/add-recipe?category={{.CategoryKey}}" class="btn">Add Recipe to {{.CategoryName}}</a>
-</div>
-{{end}}
+        <div class="text-center mt-2">
+            <a href="/add-recipe?category={{.CategoryKey}}" class="btn">Add Recipe to {{.CategoryName}}</a>
+        </div>
+
+        <div class="external-recipes mt-2">
+            <h3 class="text-center">Discover More {{.CategoryName}} Recipes</h3>
+            <div id="external-recipe-grid" class="recipe-grid">
+                <!-- External API recipes will be loaded here -->
+            </div>
+            <div class="text-center mt-1">
+                <button id="load-external-recipes" class="btn btn-secondary" data-category="{{.CategoryKey}}">Load More Recipes from Web</button>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: #333; color: white; text-align: center; padding: 2rem 0; margin-top: 4rem;">
+        <div class="container">
+            <p>&copy; 2024 Shei-deli Recipe Platform. Made with ❤️ for food lovers.</p>
+            <p>Share your recipes, discover new flavors, build community.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Load external recipes when button is clicked
+        document.getElementById('load-external-recipes').addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            loadExternalRecipes(category);
+        });
+
+        function loadExternalRecipes(category) {
+            const button = document.getElementById('load-external-recipes');
+            const grid = document.getElementById('external-recipe-grid');
+
+            button.textContent = 'Loading...';
+            button.disabled = true;
+
+            fetch(`/api/v1/external/recipes/${category}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.recipes && data.recipes.length > 0) {
+                        grid.innerHTML = '';
+                        data.recipes.forEach(recipe => {
+                            const recipeCard = createExternalRecipeCard(recipe);
+                            grid.appendChild(recipeCard);
+                        });
+                        button.textContent = 'Refresh External Recipes';
+                    } else {
+                        grid.innerHTML = '<p class="text-center">No external recipes found for this category.</p>';
+                        button.textContent = 'Try Again';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading external recipes:', error);
+                    grid.innerHTML = '<p class="text-center">Failed to load external recipes. Please try again.</p>';
+                    button.textContent = 'Try Again';
+                })
+                .finally(() => {
+                    button.disabled = false;
+                });
+        }
+
+        function createExternalRecipeCard(recipe) {
+            const card = document.createElement('div');
+            card.className = 'recipe-card external-recipe';
+            card.innerHTML = `
+                <div class="recipe-image" style="background-image: url('${recipe.image || '/images/default-recipe.jpg'}');"></div>
+                <div class="recipe-content">
+                    <h3 class="recipe-title">${recipe.title}</h3>
+                    <p class="recipe-description">${recipe.summary || 'External recipe from web'}</p>
+                    <div class="recipe-meta">
+                        <span>${recipe.readyInMinutes || 'N/A'} min • ${recipe.servings || 'N/A'} servings</span>
+                        <div class="rating">
+                            <span class="stars">★★★★☆</span>
+                            <span>External</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">
+                        Source: ${recipe.sourceName || 'Web'}
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                if (recipe.sourceUrl) {
+                    window.open(recipe.sourceUrl, '_blank');
+                }
+            });
+
+            return card;
+        }
+    </script>
+</body>
+</html>

@@ -9,7 +9,7 @@ import (
 
 // API Configuration
 const (
-    SpoonacularAPIKey = "YOUR_SPOONACULAR_API_KEY" // Replace with actual API key
+    SpoonacularAPIKey = " bd6a8785a56f4fcbb5438f332dd328a6 " // Replace with actual API key
     EdamamAppID       = "YOUR_EDAMAM_APP_ID"       // Replace with actual App ID
     EdamamAppKey      = "YOUR_EDAMAM_APP_KEY"      // Replace with actual App Key
 )
