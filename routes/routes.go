@@ -13,9 +13,6 @@ func SetupRoutes() *gin.Engine {
     router.Static("/static", "./static")
     router.Static("/images", "./images")
 
-    // Load HTML templates
-    router.LoadHTMLGlob("templates/*")
-
     // Web routes (HTML pages)
     router.GET("/", controllers.HomeHandler)
     router.GET("/category/:category", controllers.CategoryHandler)

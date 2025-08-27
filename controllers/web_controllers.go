@@ -1,6 +1,7 @@
 package controllers
 
 import (
+    "database/sql"
     "net/http"
     "strconv"
     "shei-deli/models"
@@ -108,9 +109,13 @@ func HomeHandler(c *gin.Context) {
 
     // Calculate average ratings
     for i := range featuredRecipes {
-        var avgRating float64
+        var avgRating sql.NullFloat64
         config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", featuredRecipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
-        featuredRecipes[i].AverageRating = avgRating
+        if avgRating.Valid {
+            featuredRecipes[i].AverageRating = avgRating.Float64
+        } else {
+            featuredRecipes[i].AverageRating = 0.0
+        }
     }
 
     // Get stats
@@ -161,9 +166,13 @@ func CategoryHandler(c *gin.Context) {
 
     // Calculate average ratings
     for i := range recipes {
-        var avgRating float64
+        var avgRating sql.NullFloat64
         config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", recipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
-        recipes[i].AverageRating = avgRating
+        if avgRating.Valid {
+            recipes[i].AverageRating = avgRating.Float64
+        } else {
+            recipes[i].AverageRating = 0.0
+        }
     }
 
     c.HTML(http.StatusOK, "category.html", gin.H{
@@ -189,9 +198,13 @@ func RecipeHandler(c *gin.Context) {
     }
 
     // Calculate average rating
-    var avgRating float64
+    var avgRating sql.NullFloat64
     config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", recipe.ID).Select("AVG(rating)").Scan(&avgRating)
-    recipe.AverageRating = avgRating
+    if avgRating.Valid {
+        recipe.AverageRating = avgRating.Float64
+    } else {
+        recipe.AverageRating = 0.0
+    }
 
     c.HTML(http.StatusOK, "recipe.html", gin.H{
         "Title":  recipe.Title,
@@ -235,9 +248,13 @@ func AllRecipesHandler(c *gin.Context) {
 
     // Calculate average ratings
     for i := range recipes {
-        var avgRating float64
+        var avgRating sql.NullFloat64
         config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", recipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
-        recipes[i].AverageRating = avgRating
+        if avgRating.Valid {
+            recipes[i].AverageRating = avgRating.Float64
+        } else {
+            recipes[i].AverageRating = 0.0
+        }
     }
 
     var totalRecipes int64

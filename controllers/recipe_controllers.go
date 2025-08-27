@@ -1,6 +1,7 @@
 package controllers
 
 import (
+    "database/sql"
     "encoding/json"
     "fmt"
     "io/ioutil"
@@ -39,9 +40,13 @@ func GetRecipes(c *gin.Context) {
 
     // Calculate average ratings for each recipe
     for i := range recipes {
-        var avgRating float64
+        var avgRating sql.NullFloat64
         config.DB.Model(&models.Feedback{}).Where("recipe_id = ?", recipes[i].ID).Select("AVG(rating)").Scan(&avgRating)
-        recipes[i].AverageRating = avgRating
+        if avgRating.Valid {
+            recipes[i].AverageRating = avgRating.Float64
+        } else {
+            recipes[i].AverageRating = 0.0
+        }
     }
 
     c.JSON(http.StatusOK, gin.H{
@@ -206,25 +211,4 @@ func DeleteRecipe(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Recipe deleted successfully"})
 }
 
-// Add feedback to a recipe
-func AddFeedback(c *gin.Context) {
-    var feedback models.Feedback
-    if err := c.ShouldBindJSON(&feedback); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid feedback format"})
-        return
-    }
 
-    // Check if recipe exists
-    var recipe models.Recipe
-    if err := config.DB.First(&recipe, feedback.RecipeID).Error; err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Recipe not found"})
-        return
-    }
-
-    if err := config.DB.Create(&feedback).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Error saving feedback"})
-        return
-    }
-
-    c.JSON(http.StatusCreated, feedback)
-}

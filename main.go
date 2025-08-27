@@ -1,7 +1,6 @@
 package main
 
 import (
-    "html/template"
     "log"
     "shei-deli/config"
     "shei-deli/routes"

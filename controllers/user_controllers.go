@@ -8,38 +8,55 @@ import (
     "golang.org/x/crypto/bcrypt"
 )
 
+// UserRegistration represents the registration request
+type UserRegistration struct {
+    Username  string `json:"username" binding:"required"`
+    Email     string `json:"email" binding:"required"`
+    Password  string `json:"password" binding:"required"`
+    FirstName string `json:"first_name"`
+    LastName  string `json:"last_name"`
+    Bio       string `json:"bio"`
+}
+
 // RegisterUser creates a new user account
 func RegisterUser(c *gin.Context) {
-    var user models.User
-    if err := c.ShouldBindJSON(&user); err != nil {
+    var regData UserRegistration
+    if err := c.ShouldBindJSON(&regData); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data format"})
         return
     }
-    
+
     // Validate required fields
-    if user.Username == "" || user.Email == "" || user.Password == "" {
+    if regData.Username == "" || regData.Email == "" || regData.Password == "" {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Username, email, and password are required"})
         return
     }
     
     // Check if username or email already exists
     var existingUser models.User
-    if err := config.DB.Where("username = ? OR email = ?", user.Username, user.Email).First(&existingUser).Error; err == nil {
+    if err := config.DB.Where("username = ? OR email = ?", regData.Username, regData.Email).First(&existingUser).Error; err == nil {
         c.JSON(http.StatusConflict, gin.H{"error": "Username or email already exists"})
         return
     }
-    
+
     // Hash password
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(regData.Password), bcrypt.DefaultCost)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing password"})
         return
     }
-    user.Password = string(hashedPassword)
-    
-    // Set default values
-    user.IsActive = true
-    
+
+    // Create user model
+    user := models.User{
+        Username:  regData.Username,
+        Email:     regData.Email,
+        Password:  string(hashedPassword),
+        FirstName: regData.FirstName,
+        LastName:  regData.LastName,
+        Bio:       regData.Bio,
+        IsActive:  true,
+    }
+
     if err := config.DB.Create(&user).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user"})
         return
