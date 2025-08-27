@@ -61,6 +61,7 @@ function initializeForms() {
 async function handleRecipeSubmission(event) {
     event.preventDefault();
 
+
     const formData = new FormData(event.target);
 
     // Add default user_id if not present
