@@ -1,62 +1,105 @@
-{{define "content"}}
-<div class="hero-section text-center mb-2">
-    <h2>Discover Amazing Recipes</h2>
-    <p>Explore our diverse collection of recipes organized by categories</p>
-</div>
-
-<div class="category-grid">
-    {{range .Categories}}
-    <div class="category-card" data-category="{{.Key}}">
-        <div class="category-image" style="background-image: url('/images/{{.Image}}');">
-            <div class="category-image-overlay">{{.Name}}</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Shei-deli Recipe Platform</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Shei-deli</h1>
+            <p>Your Community Recipe Sharing Platform</p>
+            <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.9;">
+                Discover amazing recipes from around the world with AI-powered recommendations
+            </p>
         </div>
-        <div class="category-content">
-            <h3 class="category-title">{{.Name}}</h3>
-            <p class="category-description">{{.Description}}</p>
-        </div>
-    </div>
-    {{end}}
-</div>
+    </header>
 
-<section class="featured-recipes mt-2">
-    <h2 class="text-center mb-2">Featured Recipes</h2>
-    <div class="recipe-grid">
-        {{range .FeaturedRecipes}}
-        <div class="recipe-card" data-recipe-id="{{.ID}}">
-            <div class="recipe-image"></div>
-            <div class="recipe-content">
-                <h3 class="recipe-title">{{.Title}}</h3>
-                <p class="recipe-description">{{.Description}}</p>
-                <div class="recipe-meta">
-                    <span>{{add .PrepTime .CookTime}} min</span>
-                    <div class="rating">
-                        <span class="stars">{{stars .AverageRating}}</span>
-                        <span>{{printf "%.1f" .AverageRating}}</span>
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/recipes">All Recipes</a></li>
+                <li><a href="/add-recipe">Add Recipe</a></li>
+                <li><a href="/register">Join Community</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="hero-section text-center mb-2">
+            <h2>Discover Amazing Recipes</h2>
+            <p>Explore our diverse collection of recipes organized by categories</p>
+        </div>
+
+        <div class="category-grid">
+            {{range .Categories}}
+            <div class="category-card" data-category="{{.Key}}">
+                <div class="category-image" style="background-image: url('/images/{{.Image}}');">
+                    <div class="category-image-overlay">{{.Name}}</div>
+                </div>
+                <div class="category-content">
+                    <h3 class="category-title">{{.Name}}</h3>
+                    <p class="category-description">{{.Description}}</p>
+                </div>
+            </div>
+            {{end}}
+        </div>
+
+        <section class="featured-recipes mt-2">
+            <h2 class="text-center mb-2">Featured Recipes</h2>
+            <div class="recipe-grid">
+                {{range .FeaturedRecipes}}
+                <div class="recipe-card" data-recipe-id="{{.ID}}">
+                    <div class="recipe-image"></div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">{{.Title}}</h3>
+                        <p class="recipe-description">{{.Description}}</p>
+                        <div class="recipe-meta">
+                            <span>{{add .PrepTime .CookTime}} min</span>
+                            <div class="rating">
+                                <span class="stars">{{stars .AverageRating}}</span>
+                                <span>{{printf "%.1f" .AverageRating}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </section>
+
+        <section class="stats-section mt-2 text-center">
+            <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                <h3>Community Stats</h3>
+                <div style="display: flex; justify-content: space-around; margin-top: 1rem; flex-wrap: wrap;">
+                    <div style="margin: 1rem;">
+                        <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalRecipes}}</h4>
+                        <p>Total Recipes</p>
+                    </div>
+                    <div style="margin: 1rem;">
+                        <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalUsers}}</h4>
+                        <p>Community Members</p>
+                    </div>
+                    <div style="margin: 1rem;">
+                        <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalFeedback}}</h4>
+                        <p>Recipe Reviews</p>
                     </div>
                 </div>
             </div>
-        </div>
-        {{end}}
-    </div>
-</section>
+        </section>
+    </main>
 
-<section class="stats-section mt-2 text-center">
-    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
-        <h3>Community Stats</h3>
-        <div style="display: flex; justify-content: space-around; margin-top: 1rem; flex-wrap: wrap;">
-            <div style="margin: 1rem;">
-                <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalRecipes}}</h4>
-                <p>Total Recipes</p>
-            </div>
-            <div style="margin: 1rem;">
-                <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalUsers}}</h4>
-                <p>Community Members</p>
-            </div>
-            <div style="margin: 1rem;">
-                <h4 style="color: #667eea; font-size: 2rem;">{{.Stats.TotalFeedback}}</h4>
-                <p>Recipe Reviews</p>
-            </div>
+    <footer style="background: #333; color: white; text-align: center; padding: 2rem 0; margin-top: 4rem;">
+        <div class="container">
+            <p>&copy; 2024 Shei-deli Recipe Platform. Made with ❤️ for food lovers.</p>
+            <p>Share your recipes, discover new flavors, build community.</p>
         </div>
-    </div>
-</section>
-{{end}}
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
