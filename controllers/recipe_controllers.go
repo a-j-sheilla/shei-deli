@@ -294,7 +294,7 @@ func getCategoryDefaultImage(category models.RecipeCategory) string {
         return imagePath
     }
 
-    return "/images/background.jpeg"
+    return "/images/vegan.jpeg" // Default fallback
 }
 
 // UpdateRecipe updates an existing recipe

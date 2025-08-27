@@ -273,8 +273,9 @@ func FeaturedHandler(c *gin.Context) {
 
     paginatedRecipes := featuredRecipes[start:end]
 
-    c.HTML(http.StatusOK, "featured.html", gin.H{
+    c.HTML(http.StatusOK, "base.html", gin.H{
         "Title":       "Featured Recipes",
+        "Template":    "featured.html",
         "Recipes":     paginatedRecipes,
         "CurrentPage": page,
         "TotalPages":  totalPages,

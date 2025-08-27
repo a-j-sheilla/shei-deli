@@ -40,7 +40,7 @@
         <div class="recipe-grid">
             {{range .Recipes}}
             <div class="recipe-card" data-recipe-id="{{.ID}}" onclick="window.location.href='/recipe/{{.ID}}'">
-                <div class="recipe-image" style="background-image: url('{{if .ImageURL}}{{.ImageURL}}{{else}}/images/background.jpeg{{end}}'); background-size: cover; background-position: center;"></div>
+                <div class="recipe-image" style="background-image: url('{{.ImageURL}}'); background-size: cover; background-position: center;"></div>
                 <div class="recipe-content">
                     <h3 class="recipe-title">{{.Title}}</h3>
                     <p class="recipe-description">{{.Description}}</p>

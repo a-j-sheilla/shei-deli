@@ -191,5 +191,35 @@ func SeedDatabase() {
         }
     }
 
+    // Update existing recipes without images to have category-specific images
+    updateRecipeImages()
+
     log.Println("Database seeding completed")
+}
+
+// updateRecipeImages sets category-specific images for recipes that don't have images
+func updateRecipeImages() {
+    var recipes []models.Recipe
+    DB.Where("image_url = ? OR image_url IS NULL", "").Find(&recipes)
+
+    categoryImages := map[models.RecipeCategory]string{
+        models.PlantBasedMeals: "/images/vegan.jpeg",
+        models.KidsMeals:       "/images/kids-meals.jpeg",
+        models.LightMeals:      "/images/light-meals.jpeg",
+        models.HeartyMeals:     "/images/hearty-meals.jpeg",
+        models.MeatStews:       "/images/stews.jpeg",
+        models.VeggieStews:     "/images/vegetable-stews.jpeg",
+        models.SeafoodStews:    "/images/fish&sea-food.jpeg",
+        models.FusionStews:     "/images/fusion.jpeg",
+        models.Soups:           "/images/soups.jpeg",
+        models.Drinks:          "/images/drinks&smoothies.jpeg",
+        models.Pastries:        "/images/pastries.jpeg",
+    }
+
+    for _, recipe := range recipes {
+        if imageURL, exists := categoryImages[recipe.Category]; exists {
+            DB.Model(&recipe).Update("image_url", imageURL)
+            log.Printf("Updated image for recipe '%s' to %s", recipe.Title, imageURL)
+        }
+    }
 }
