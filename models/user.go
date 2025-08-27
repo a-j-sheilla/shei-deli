@@ -32,7 +32,7 @@ func (u *User) GetFullName() string {
 }
 
 // GetDisplayName returns the best available display name
-func (u *User) GetDisplayName() string {
+func (u User) GetDisplayName() string {
     if u.FirstName != "" {
         return u.FirstName
     }
